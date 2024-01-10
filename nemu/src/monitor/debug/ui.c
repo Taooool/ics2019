@@ -46,6 +46,9 @@ static int cmd_si(char *args);
 //pa1: display registers like GDB
 static int cmd_info(char *args); 
 
+//pa1: read memory version 1
+static int cmd_x(char *args);
+
 static struct {
   char *name;
   char *description;
@@ -60,6 +63,8 @@ static struct {
 	{ "si", "Single step execution", cmd_si },
 	//pa1: display registers like GDB
 	{ "info", "Display program status", cmd_info },
+	//pa1: read memory version 1
+	{ "x", "Read memory", cmd_x },
 
 };
 
@@ -117,6 +122,37 @@ static int cmd_info(char *args)
 	else
 		printf("Unknown command '%s'\n", arg);
 	return 0;
+}
+
+//pa1: read memory version 1
+static int cmd_x(char *args)
+{
+	char *arg = strtok(NULL, " ");
+	if(arg == NULL)
+	{
+		printf("Please input two argument!\n");
+		return 0;
+	}
+	int n = atoi(arg);
+	arg = strtok(NULL, " ");
+	if(arg == NULL)
+	{
+		printf("Please input two argument!\n");
+		return 0;
+	}
+	vaddr_t addr = strtol(arg, NULL, 16);
+	for(int i=0; i<n; i++)
+	{
+		printf("0x%08x: ", addr);
+		for(int j=0; j<4; j++)
+		{
+			printf("%02x ", paddr_read(addr, 1));
+			addr++;
+		}
+		printf("\n");
+	}
+	return 0;
+		
 }
 void ui_mainloop(int is_batch_mode) {
   if (is_batch_mode) {
