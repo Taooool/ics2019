@@ -140,7 +140,7 @@ static int cmd_x(char *args)
 		printf("Please input two argument!\n");
 		return 0;
 	}
-	vaddr_t addr = strtol(arg, NULL, 16);
+	paddr_t addr = strtol(arg, NULL, 16);
 	for(int i=0; i<n; i++)
 	{
 		printf("0x%08x: ", addr);
