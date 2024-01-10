@@ -38,6 +38,9 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+//pa1: single step execution
+static int cmd_si(char *args);
+
 static struct {
   char *name;
   char *description;
@@ -48,6 +51,8 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
+  //pa1: single step execution
+  { "si", "Single step execution", cmd_si },
 
 };
 
@@ -73,6 +78,17 @@ static int cmd_help(char *args) {
     }
     printf("Unknown command '%s'\n", arg);
   }
+  return 0;
+}
+
+//pa1: single step execution
+static int cmd_si(char *args)
+{
+  char *arg = strtok(NULL, " ");
+  int step = 1;
+  if(arg != NULL)
+    step = atoi(arg);
+  cpu_exec(step);
   return 0;
 }
 
