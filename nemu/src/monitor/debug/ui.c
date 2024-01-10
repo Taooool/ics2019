@@ -8,6 +8,8 @@
 #include <readline/history.h>
 
 void cpu_exec(uint64_t);
+//pa1: display registers like GDB
+void isa_reg_display();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -41,6 +43,9 @@ static int cmd_help(char *args);
 //pa1: single step execution
 static int cmd_si(char *args);
 
+//pa1: display registers like GDB
+static int cmd_info(char *args); 
+
 static struct {
   char *name;
   char *description;
@@ -51,8 +56,10 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-  //pa1: single step execution
-  { "si", "Single step execution", cmd_si },
+	//pa1: single step execution
+	{ "si", "Single step execution", cmd_si },
+	//pa1: display registers like GDB
+	{ "info", "Display program status", cmd_info },
 
 };
 
@@ -84,14 +91,33 @@ static int cmd_help(char *args) {
 //pa1: single step execution
 static int cmd_si(char *args)
 {
-  char *arg = strtok(NULL, " ");
-  int step = 1;
-  if(arg != NULL)
-    step = atoi(arg);
-  cpu_exec(step);
-  return 0;
+	char *arg = strtok(NULL, " ");
+	int step = 1;
+	if(arg != NULL)
+		step = atoi(arg);
+	cpu_exec(step);
+	return 0;
 }
 
+//pa1: display registers like GDB
+static int cmd_info(char *args)
+{
+	char *arg = strtok(NULL, " ");
+	if(arg == NULL)
+	{
+		printf("Please input the argument!\n");
+		return 0;
+	}	
+	if(strcmp(arg, "r") == 0)
+		isa_reg_display();
+	else if(strcmp(arg, "w") == 0)
+	{
+
+	}
+	else
+		printf("Unknown command '%s'\n", arg);
+	return 0;
+}
 void ui_mainloop(int is_batch_mode) {
   if (is_batch_mode) {
     cmd_c(NULL);
