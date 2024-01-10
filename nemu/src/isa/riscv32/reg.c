@@ -11,6 +11,8 @@ void isa_reg_display() {
 	//pa1: display registers like GDB
 	for(int i=0; i<32; i++)
 		printf("%s\t0x%08x\t%d\n", regsl[i], reg_l(i), reg_l(i));
+	printf("pc\t0x%08x\t%d\n", cpu.pc, cpu.pc);
+	
 }
 
 uint32_t isa_reg_str2val(const char *s, bool *success) {
