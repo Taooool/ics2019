@@ -223,7 +223,7 @@ static uint32_t eval(int p, int q, bool *success)
   else
   {
     int opIndex = get_op(p, q);
-    printf("opIndex = %d\n", opIndex);
+    //printf("opIndex = %d\n", opIndex);
     //can't dispose the pointer case in the following switch case
     if(opIndex == -1)
     {
