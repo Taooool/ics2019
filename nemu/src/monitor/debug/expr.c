@@ -284,6 +284,7 @@ uint32_t expr(char *e, bool *success) {
   for(int i=0; i<nr_token; i++)
   {
     int formerTokenType = (i==0) ? TK_NOTYPE : tokens[i-1].type;
+    printf("i= %d\t type= %d\t formerType= %d\n", i, tokens[i].type, formerTokenType); 
     //e.g. an expression like ( *p) is BNF, and 4 + *p is not BNF, it should be 4 + (*p)
     if((tokens[i].type == '*') && (formerTokenType == TK_NOTYPE || formerTokenType == TK_LEFT_PARENTHESIS))
     {
