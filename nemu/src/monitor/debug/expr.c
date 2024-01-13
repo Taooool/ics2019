@@ -108,7 +108,7 @@ static bool make_token(char *e) {
 	  case TK_HEX:
             printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
 	    tokens[nr_token].type = rules[i].token_type;
-	    tokens[nr_token].type = rules[i].priority;
+	    tokens[nr_token].priority = rules[i].priority;
 	    strncpy(tokens[nr_token].str, substr_start, substr_len);
 	    tokens[nr_token].str[substr_len] = '\0';
 	    nr_token++;
