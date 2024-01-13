@@ -12,16 +12,26 @@ int main(int argc, char *argv[]) {
 
   //pa1: 生成表达式
   FILE *fp = fopen("/home/hust/ics2019/nemu/tools/gen-expr/input", "r");
-  char expersion[100];
+  char experssion[100];
   uint32_t result;
+  bool flag = true;
+  int nofExpr = 0;
   while(!feof(fp))
   {
     fscanf(fp, "%d", &result);
-    fscanf(fp, "%s", expersion);
+    fscanf(fp, "%s", experssion);
     bool success = true;
-    uint32_t result2 = expr(expersion, &success);
-    printf("%s\t%d\t%d\t%d\n", expersion, result, result2, result == result2);
+    uint32_t result2 = expr(experssion, &success);
+    printf("%s\t%d\t%d\n", experssion, result, result2);
+    if(result != result2)
+    {
+    	flag = false;
+    	printf("expresion calculate wrongly!\n");
+    	break;
+    }
   }
+  if(flag)
+    printf("expersion calculate correctly!\ntest times: %d\n", nofExpr);
   fclose(fp);
   /* Receive commands from user. */
   ui_mainloop(is_batch_mode);
