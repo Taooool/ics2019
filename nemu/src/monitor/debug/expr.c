@@ -223,6 +223,7 @@ static uint32_t eval(int p, int q, bool *success)
     //pa1: 扩展表达式求值的功能
     else if(tokens[p].type == TK_REG)
     {
+      printf("reg= %s\n", tokens[p].str);
       result = isa_reg_str2val(tokens[p].str, success);
       if(success == false)
         printf("can't find the register\n");
