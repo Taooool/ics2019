@@ -95,10 +95,35 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-
-        switch (rules[i].token_type) {
-          default: TODO();
-        }
+	//pa1: 词法分析
+	if(substr_len > 31)
+  	  panic("the length of the token is too long");
+	switch(rules[i].token_type)
+	{
+	  case TK_NOTYPE: break;
+	  case TK_DECIMAL:
+	  case TK_HEX:
+	    tokens[nr_token].type = rules[i].token_type;
+	    tokens[nr_token].type = rules[i].priority;
+	    strncpy(tokens[nr_token].str, substr_start, substr_len);
+	    tokens[nr_token].str[substr_len] = '\0';
+	    nr_token++;
+	    break;
+	  case TK_REG:
+	    //TODO:
+	  case TK_PLUS:
+	  case TK_MINUS:
+	  case TK_MULTIPLE:
+	  case TK_DIVIDE:
+	  case TK_LEFT_PARENTHESIS:
+	  case TK_RIGHT_PARENTHESIS:
+	  case TK_EQ:
+	    tokens[nr_token].type = rules[i].token_type;
+	    tokens[nr_token].priority = rules[i].priority;
+	    nr_token++;
+	    break;
+	  default: TODO();
+	}
 
         break;
       }
