@@ -106,6 +106,7 @@ static bool make_token(char *e) {
 	  case TK_NOTYPE: break;
 	  case TK_DECIMAL:
 	  case TK_HEX:
+            printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
 	    tokens[nr_token].type = rules[i].token_type;
 	    tokens[nr_token].type = rules[i].priority;
 	    strncpy(tokens[nr_token].str, substr_start, substr_len);
