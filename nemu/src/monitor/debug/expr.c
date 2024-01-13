@@ -93,7 +93,7 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        //Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s", i, rules[i].regex, position, substr_len, substr_len, substr_start);
         position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -246,6 +246,7 @@ static uint32_t eval(int p, int q, bool *success)
     else if(tokens[opIndex].type == TK_DEREF)
     {
       paddr_t addr = eval(opIndex+1, q, success);
+      printf("TK_DEREF\taddr= 0x%08x\n", addr);
       return paddr_read(addr, 4);
     }
     int val1 = eval(p, opIndex-1, success);
