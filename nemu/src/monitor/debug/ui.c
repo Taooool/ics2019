@@ -8,7 +8,7 @@
 #include <readline/history.h>
 
 void cpu_exec(uint64_t);
-//pa1: display registers like GDB
+//pa1: 打印寄存器
 void isa_reg_display();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -40,14 +40,17 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
-//pa1: single step execution
+//pa1: 单步执行
 static int cmd_si(char *args);
 
-//pa1: display registers like GDB
+//pa1: 打印寄存器
 static int cmd_info(char *args); 
 
-//pa1: read memory version 1
+//pa1: 扫描内存
 static int cmd_x(char *args);
+
+//pa1: 表达式求值
+static int cmd_p(char *args);
 
 static struct {
   char *name;
@@ -59,12 +62,14 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-	//pa1: single step execution
+	//pa1: 单步执行
 	{ "si", "Single step execution", cmd_si },
-	//pa1: display registers like GDB
+	//pa1: 打印寄存器
 	{ "info", "Display program status", cmd_info },
-	//pa1: read memory version 1
+	//pa1: 扫描内存
 	{ "x", "Read memory", cmd_x },
+  //pa2: 表达式求值
+  { "p", "Expression evaluation", cmd_p },
 
 };
 
@@ -93,7 +98,7 @@ static int cmd_help(char *args) {
   return 0;
 }
 
-//pa1: single step execution
+//pa1: 单步执行
 static int cmd_si(char *args)
 {
 	char *arg = strtok(NULL, " ");
@@ -104,7 +109,7 @@ static int cmd_si(char *args)
 	return 0;
 }
 
-//pa1: display registers like GDB
+//pa1: 打印寄存器
 static int cmd_info(char *args)
 {
 	char *arg = strtok(NULL, " ");
@@ -124,7 +129,7 @@ static int cmd_info(char *args)
 	return 0;
 }
 
-//pa1: read memory version 1
+//pa1: 扫描内存
 static int cmd_x(char *args)
 {
 	char *arg = strtok(NULL, " ");
@@ -154,6 +159,19 @@ static int cmd_x(char *args)
 	return 0;
 		
 }
+
+//pa2: 表达式求值
+static int cmd_p(char *args)
+{
+  bool success = true;
+  uint32_t result = expr(args, &success);
+  if(success == false)
+    printf("Expression evaluation failed!\n");
+  else
+    printf("0x%x\t%d\n", result, result);
+  return 0;
+}
+
 void ui_mainloop(int is_batch_mode) {
   if (is_batch_mode) {
     cmd_c(NULL);

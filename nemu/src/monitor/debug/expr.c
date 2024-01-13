@@ -10,21 +10,36 @@ enum {
   TK_NOTYPE = 256, TK_EQ
 
   /* TODO: Add more token types */
-
+  //pa1: 词法分析
+  , TK_PLUS, TK_MINUS, TK_MULTIPLE, TK_DIVIDE, TK_LEFT_PARENTHESIS, TK_RIGHT_PARENTHESIS
+  , TK_DECIMAL, TK_HEX, TK_REG, TK_POINTER
 };
 
 static struct rule {
   char *regex;
   int token_type;
+  //pa1: 词法分析
+  int priority; //the bigger num is, the higher priority is
 } rules[] = {
 
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
 
-  {" +", TK_NOTYPE},    // spaces
-  {"\\+", '+'},         // plus
-  {"==", TK_EQ}         // equal
+  //pa1: 词法分析
+  {" +", TK_NOTYPE, 0},    // spaces
+  {"\\+", TK_PLUS, 3},     // plus
+  {"-", TK_MINUS, 3},      // minus
+  {"\\*", TK_MULTIPLE, 4}, // multiple
+  {"/", TK_DIVIDE, 4},     // divide
+  {"\\(", TK_LEFT_PARENTHESIS, 6}, // left parenthesis
+  {"\\)", TK_RIGHT_PARENTHESIS, 6}, // right parenthesis
+  //TODO: deciaml can be more accurate
+  {"[0-9]+", TK_DECIMAL, 0}, // decimal
+  {"0[xX][0-9a-fA-F]+", TK_HEX, 0}, // hex
+  {"\\$[a-zA-Z]+", TK_REG, 0}, // register
+  {"==", TK_EQ, 2},        // equal
+  //pointer need to be recognized specially in function expr()
 };
 
 #define NR_REGEX (sizeof(rules) / sizeof(rules[0]) )
@@ -51,6 +66,8 @@ void init_regex() {
 typedef struct token {
   int type;
   char str[32];
+  //pa1: 词法分析
+  int priority; //corresponding to the array rules[]
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
@@ -96,11 +113,131 @@ static bool make_token(char *e) {
   return true;
 }
 
+//pa1: 递归求值
+//function: check the expersion is surrounded by parentheses or not
+static bool check_parentheses(int p, int q)
+{
+  if(tokens[p].type != TK_LEFT_PARENTHESIS || tokens[q].type != TK_RIGHT_PARENTHESIS)
+    return false;
+  //dipose special case: (1+2) * (3+4) which is correct but not a BNF
+  int leftParenthesesNum = 0;
+  for(int i=p; i<=q; i++)
+  {
+    if(tokens[i].type == TK_LEFT_PARENTHESIS)
+      leftParenthesesNum++;
+    else if(tokens[i].type == TK_RIGHT_PARENTHESIS)
+      leftParenthesesNum--;
+    if(leftParenthesesNum == 0 && i != q)
+      return false;
+  }
+  return true;
+}
+
+//pa1: 递归求值
+//function: get the division operator's position to split the expersion
+static int get_op(int p, int q)
+{
+  int op = -1;
+  int priority = 9999;
+  int parenthesesNum = 0;
+  for(int i=p; i<=q; i++)
+  {
+    if(tokens[i].type == TK_LEFT_PARENTHESIS)
+      parenthesesNum++;
+    else if(tokens[i].type == TK_RIGHT_PARENTHESIS)
+      parenthesesNum--;
+    else if(parenthesesNum == 0)
+    {
+      if(tokens[i].priority <= priority && tokens[i].priority != 0)
+      {
+        op = i;
+        priority = tokens[i].priority;
+      }
+    }
+  }
+  return op;
+}
+
+//pa1: 递归求值
+static uint32_t eval(int p, int q, bool *success)
+{
+  if(p>q)
+  {
+    *success = false;
+    return 0;
+  }
+  else if(p==q)
+  {
+    if(tokens[p].type == TK_DECIMAL)
+      return atoi(tokens[p].str);
+    else if(tokens[p].type == TK_HEX)
+    {
+      int result = 0;
+      sscanf(tokens[p].str, "%x", &result);
+      return result;
+    }
+    //TODO: reg
+  }
+  else if(check_parentheses(p, q) == true)
+    return eval(p+1, q-1, success);
+  else
+  {
+    int opIndex = get_op(p, q);
+    //can't dispose the pointer case in the following switch case
+    if(opIndex == -1)
+    {
+      *success = false;
+      printf("can't find the operator\n");
+      return 0;
+    }
+    else if(tokens[opIndex].type == TK_POINTER)
+    {
+      vaddr_t addr = eval(opIndex+1, q, success);
+      return vaddr_read(addr, 4);
+    }
+    int val1 = eval(p, opIndex-1, success);
+    int val2 = eval(opIndex+1, q, success);
+    switch(tokens[opIndex].type)
+    {
+      case TK_PLUS: return val1 + val2;
+      case TK_MINUS: return val1 - val2;
+      case TK_MULTIPLE: return val1 * val2;
+      case TK_DIVIDE: 
+        if(val2 == 0)
+        {
+          *success = false;
+          printf("divisor can't be zero\n");
+          return 0;
+        }
+        else
+          return val1 / val2;
+      case TK_EQ: return val1 == val2;
+      default: assert(0);
+    }
+  }
+}
+
 uint32_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
     return 0;
   }
+
+  //pa1: 词法分析
+  for(int i=0; i<nr_token; i++)
+  {
+    int formerTokenType = (i==0) ? TK_NOTYPE : tokens[i-1].type;
+    //e.g. an expersion like ( *p) is BNF, and 4 + *p is not BNF, it should be 4 + (*p)
+    if(tokens[i].type == '*' && (formerTokenType == TK_NOTYPE || formerTokenType == TK_LEFT_PARENTHESIS))
+    {
+      tokens[i].type = TK_POINTER;
+      tokens[i].priority = 5;
+    }
+  }
+
+  //pa1: 递归求值
+  *success = true;
+  return eval(0, nr_token-1, success);
 
   /* TODO: Insert codes to evaluate the expression. */
   TODO();
