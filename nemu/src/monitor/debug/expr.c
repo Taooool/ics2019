@@ -106,7 +106,7 @@ static bool make_token(char *e) {
 	  case TK_NOTYPE: break;
 	  case TK_DECIMAL:
 	  case TK_HEX:
-            printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
+            //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
 	    tokens[nr_token].type = rules[i].token_type;
 	    tokens[nr_token].priority = rules[i].priority;
 	    strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -138,7 +138,7 @@ static bool make_token(char *e) {
       return false;
     }
   }
-  printf("nr_token = %d\n", nr_token);
+  //printf("nr_token = %d\n", nr_token);
   return true;
 }
 
@@ -199,15 +199,15 @@ static uint32_t eval(int p, int q, bool *success)
   else if(p==q)
   {
     int result = 0;
-    printf("%d %d\n", tokens[p].type, TK_DECIMAL);
+    //printf("%d %d\n", tokens[p].type, TK_DECIMAL);
     if(tokens[p].type == TK_DECIMAL)
     {
-      printf("it is a decimal\n");
+      //printf("it is a decimal\n");
       result = atoi(tokens[p].str);
     }
     else if(tokens[p].type == TK_HEX)
       sscanf(tokens[p].str, "%x", &result);
-    printf("token str: %s \t result: %d\n", tokens[p].str, result);
+    //printf("token str: %s \t result: %d\n", tokens[p].str, result);
     return result;
     //TODO: reg
   }
