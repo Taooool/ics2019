@@ -1,3 +1,8 @@
+//pa1: 生成表达式
+#include<stdio.h>
+#include<nemu.h>
+uint32_t expr(char *e, bool *success);
+
 int init_monitor(int, char *[]);
 void ui_mainloop(int);
 

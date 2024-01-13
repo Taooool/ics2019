@@ -198,9 +198,9 @@ static uint32_t eval(int p, int q, bool *success)
   }
   
   //dispose the spaces in the expersion
-  while(tookens[p].type == TK_NOTYPE && p <= q)
+  while(tokens[p].type == TK_NOTYPE && p <= q)
     p++;
-  while(tookens[q].type == TK_NOTYPE && p <= q)
+  while(tokens[q].type == TK_NOTYPE && p <= q)
     q--;
 
   if(p==q)
