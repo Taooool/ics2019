@@ -199,7 +199,10 @@ static uint32_t eval(int p, int q, bool *success)
   {
     int result = 0;
     if(tokens[p].type == TK_DECIMAL)
+    {
+      printf("it is a decimal\n");
       result = atoi(tokens[p].str);
+    }
     else if(tokens[p].type == TK_HEX)
       sscanf(tokens[p].str, "%x", &result);
     printf("token str: %s \t result: %d\n", tokens[p].str, result);
