@@ -7,6 +7,7 @@
 #include <regex.h>
 //pa1: 表达式求值
 #include <stdlib.h> //to use atoi()
+#include <stdio.h> //to use sscanf()
 
 enum {
   TK_NOTYPE = 256, TK_EQ
