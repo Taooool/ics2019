@@ -19,8 +19,8 @@ int main(int argc, char *argv[]) {
   int nofExpr = 0;
   while(!feof(fp))
   {
-    fscanf(fp, "%d", &result);
-    fscanf(fp, "%s", experssion);
+    int useless1 = fscanf(fp, "%d", &result);
+    int useless2 = fscanf(fp, "%s", experssion);
     bool success = true;
     uint32_t result2 = expr(experssion, &success);
     printf("%s\t%d\t%d\n", experssion, result, result2);
