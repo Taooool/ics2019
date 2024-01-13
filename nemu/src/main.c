@@ -10,6 +10,7 @@ int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
   int is_batch_mode = init_monitor(argc, argv);
 
+  // /*
   //pa1: 生成表达式
   FILE *fp = fopen("/home/hust/ics2019/nemu/tools/gen-expr/input", "r");
   char experssion[100];
@@ -32,8 +33,10 @@ int main(int argc, char *argv[]) {
     nofExpr++;
   }
   if(flag)
-    printf("expersion calculate correctly!\ntest times: %d\n", nofExpr);
+    printf("expression calculate correctly!\ntest times: %d\n", nofExpr);
   fclose(fp);
+  // */
+
   /* Receive commands from user. */
   ui_mainloop(is_batch_mode);
 

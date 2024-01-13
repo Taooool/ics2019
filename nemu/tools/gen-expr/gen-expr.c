@@ -20,9 +20,9 @@ static inline void gen_rand_expr(int p, int q) {
   //buf[q+1] = '\0';  //ps: can't implement here cause the function will iterate
   if(p > q)
     return ;	//ps:don't foget
-  else if(p == q) //1 token expersion is a number
+  else if(p == q) //1 token expression is a number
     buf[p] = choose(9) + '1'; //choose(9) 'scope is 0~8, so add '1' to get the char. not gen 0 to prevent /0 case
-  else if(p + 1 == q) //2 token expersion is also a number
+  else if(p + 1 == q) //2 token expression is also a number
   {
     buf[p] = choose(9) + '1'; //the first number can't be 0
     buf[q] = choose(10) + '0';

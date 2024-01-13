@@ -8,6 +8,7 @@
 //pa1: 表达式求值
 #include <stdlib.h> //to use atoi()
 #include <stdio.h> //to use sscanf()
+uint32_t isa_reg_str2val(const char *s, bool *success);
 
 enum {
   TK_NOTYPE = 256, TK_EQ
@@ -15,7 +16,7 @@ enum {
   /* TODO: Add more token types */
   //pa1: 词法分析
   , TK_PLUS, TK_MINUS, TK_MULTIPLE, TK_DIVIDE, TK_LEFT_PARENTHESIS, TK_RIGHT_PARENTHESIS
-  , TK_DECIMAL, TK_HEX, TK_REG, TK_POINTER
+  , TK_DECIMAL, TK_HEX, TK_REG, TK_DEREF, TK_NEQ, TK_AND
 };
 
 static struct rule {
@@ -42,6 +43,8 @@ static struct rule {
   {"[0-9]+", TK_DECIMAL, 0}, // decimal
   {"\\$[a-zA-Z]+", TK_REG, 0}, // register
   {"==", TK_EQ, 2},        // equal
+  {"!=", TK_NEQ, 2},       // not equal
+  {"&&", TK_AND, 1},       // and
   //pointer need to be recognized specially in function expr()
 };
 
@@ -97,36 +100,37 @@ static bool make_token(char *e) {
          * to record the token in the array `tokens'. For certain types
          * of tokens, some extra actions should be performed.
          */
-	//pa1: 词法分析
-	if(substr_len > 31)
-  	  panic("the length of the token is too long");
-	switch(rules[i].token_type)
-	{
-	  case TK_NOTYPE: break;
-	  case TK_DECIMAL:
-	  case TK_HEX:
-      //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
-	    tokens[nr_token].type = rules[i].token_type;
-	    tokens[nr_token].priority = rules[i].priority;
-	    strncpy(tokens[nr_token].str, substr_start, substr_len);
-	    tokens[nr_token].str[substr_len] = '\0';
-	    nr_token++;
-	    break;
-	  case TK_REG:
-	    //TODO:
-	  case TK_PLUS:
-	  case TK_MINUS:
-	  case TK_MULTIPLE:
-	  case TK_DIVIDE:
-	  case TK_LEFT_PARENTHESIS:
-	  case TK_RIGHT_PARENTHESIS:
-	  case TK_EQ:
-	    tokens[nr_token].type = rules[i].token_type;
-	    tokens[nr_token].priority = rules[i].priority;
-	    nr_token++;
-	    break;
-	  default: TODO();
-	}
+        //pa1: 词法分析
+        if(substr_len > 31)
+            panic("the length of the token is too long");
+        switch(rules[i].token_type)
+        {
+          case TK_NOTYPE: break;
+          case TK_DECIMAL:
+          case TK_HEX:
+          case TK_REG:
+            //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
+            tokens[nr_token].type = rules[i].token_type;
+            tokens[nr_token].priority = rules[i].priority;
+            strncpy(tokens[nr_token].str, substr_start, substr_len);
+            tokens[nr_token].str[substr_len] = '\0';
+            nr_token++;
+            break;
+          case TK_PLUS:
+          case TK_MINUS:
+          case TK_MULTIPLE:
+          case TK_DIVIDE:
+          case TK_LEFT_PARENTHESIS:
+          case TK_RIGHT_PARENTHESIS:
+          case TK_EQ:
+          case TK_NEQ:
+          case TK_AND:
+            tokens[nr_token].type = rules[i].token_type;
+            tokens[nr_token].priority = rules[i].priority;
+            nr_token++;
+            break;
+          default: TODO();
+        }
 
         break;
       }
@@ -142,7 +146,7 @@ static bool make_token(char *e) {
 }
 
 //pa1: 递归求值
-//function: check the expersion is surrounded by parentheses or not
+//function: check the expression is surrounded by parentheses or not
 static bool check_parentheses(int p, int q)
 {
   if(tokens[p].type != TK_LEFT_PARENTHESIS || tokens[q].type != TK_RIGHT_PARENTHESIS)
@@ -162,7 +166,7 @@ static bool check_parentheses(int p, int q)
 }
 
 //pa1: 递归求值
-//function: get the division operator's position to split the expersion
+//function: get the division operator's position to split the expression
 static int get_op(int p, int q)
 {
   int op = -1;
@@ -176,7 +180,7 @@ static int get_op(int p, int q)
       parenthesesNum--;
     else if(parenthesesNum == 0)
     {
-      //!= 0 to ignore the spaces
+      //use != 0 to ignore the spaces
       if(tokens[i].priority <= priority && tokens[i].priority != 0)
       {
         op = i;
@@ -196,7 +200,7 @@ static uint32_t eval(int p, int q, bool *success)
     return 0;
   }
   
-  //dispose the spaces in the expersion
+  //dispose the spaces in the expression
   while(tokens[p].type == TK_NOTYPE && p <= q)
     p++;
   while(tokens[q].type == TK_NOTYPE && p <= q)
@@ -214,8 +218,15 @@ static uint32_t eval(int p, int q, bool *success)
     else if(tokens[p].type == TK_HEX)
       sscanf(tokens[p].str, "%x", &result);
     //printf("token str: %s \t result: %d\n", tokens[p].str, result);
+
+    //pa1: 扩展表达式求值的功能
+    else if(tokens[p].type == TK_REG)
+    {
+      result = isa_reg_str2val(tokens[p].str, success);
+      if(success == false)
+        printf("can't find the register\n");
+    }
     return result;
-    //TODO: reg
   }
   else if(check_parentheses(p, q) == true)
     return eval(p+1, q-1, success);
@@ -230,10 +241,10 @@ static uint32_t eval(int p, int q, bool *success)
       printf("can't find the operator\n");
       return 0;
     }
-    else if(tokens[opIndex].type == TK_POINTER)
+    else if(tokens[opIndex].type == TK_DEREF)
     {
-      vaddr_t addr = eval(opIndex+1, q, success);
-      return vaddr_read(addr, 4);
+      paddr_t addr = eval(opIndex+1, q, success);
+      return paddr_read(addr, 4);
     }
     int val1 = eval(p, opIndex-1, success);
     int val2 = eval(opIndex+1, q, success);
@@ -252,6 +263,8 @@ static uint32_t eval(int p, int q, bool *success)
         else
           return val1 / val2;
       case TK_EQ: return val1 == val2;
+      case TK_NEQ: return val1 != val2;
+      case TK_AND: return val1 && val2;
       default: assert(0);
     }
   }
@@ -268,10 +281,10 @@ uint32_t expr(char *e, bool *success) {
   for(int i=0; i<nr_token; i++)
   {
     int formerTokenType = (i==0) ? TK_NOTYPE : tokens[i-1].type;
-    //e.g. an expersion like ( *p) is BNF, and 4 + *p is not BNF, it should be 4 + (*p)
+    //e.g. an expression like ( *p) is BNF, and 4 + *p is not BNF, it should be 4 + (*p)
     if(tokens[i].type == '*' && (formerTokenType == TK_NOTYPE || formerTokenType == TK_LEFT_PARENTHESIS))
     {
-      tokens[i].type = TK_POINTER;
+      tokens[i].type = TK_DEREF;
       tokens[i].priority = 5;
     }
   }
