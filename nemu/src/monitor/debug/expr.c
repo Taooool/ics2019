@@ -109,7 +109,7 @@ static bool make_token(char *e) {
           case TK_DECIMAL:
           case TK_HEX:
           case TK_REG:
-            //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
+            printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
             tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].priority = rules[i].priority;
             strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -192,6 +192,7 @@ static int get_op(int p, int q)
 }
 
 //pa1: 递归求值
+//argument: p,q refer to token position not character position in expr
 static uint32_t eval(int p, int q, bool *success)
 {
   if(p>q)

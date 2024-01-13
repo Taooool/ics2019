@@ -18,7 +18,7 @@ void isa_reg_display() {
 uint32_t isa_reg_str2val(const char *s, bool *success) {
   //pa1: 扩展表达式求值的功能
   *success = true;
-  if(strcmp("pc", s))
+  if(strcmp("pc", s+1))
     return cpu.pc;
   else if(s[1] == '0')
     return reg_l(0);
