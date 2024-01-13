@@ -287,6 +287,7 @@ uint32_t expr(char *e, bool *success) {
     //e.g. an expression like ( *p) is BNF, and 4 + *p is not BNF, it should be 4 + (*p)
     if(tokens[i].type == '*' && (formerTokenType == 1 || formerTokenType == TK_NOTYPE || formerTokenType == TK_LEFT_PARENTHESIS))	//case == 1 corresponds above code "i==0"
     {
+      printf("TK_DEREF 2");
       tokens[i].type = TK_DEREF;
       tokens[i].priority = 5;
     }
