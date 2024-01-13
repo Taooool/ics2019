@@ -106,7 +106,7 @@ static bool make_token(char *e) {
 	  case TK_NOTYPE: break;
 	  case TK_DECIMAL:
 	  case TK_HEX:
-            //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
+      //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
 	    tokens[nr_token].type = rules[i].token_type;
 	    tokens[nr_token].priority = rules[i].priority;
 	    strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -196,7 +196,14 @@ static uint32_t eval(int p, int q, bool *success)
     *success = false;
     return 0;
   }
-  else if(p==q)
+  
+  //dispose the spaces in the expersion
+  while(tookens[p].type == TK_NOTYPE && p <= q)
+    p++;
+  while(tookens[q].type == TK_NOTYPE && p <= q)
+    q--;
+
+  if(p==q)
   {
     int result = 0;
     //printf("%d %d\n", tokens[p].type, TK_DECIMAL);
@@ -231,7 +238,6 @@ static uint32_t eval(int p, int q, bool *success)
     }
     int val1 = eval(p, opIndex-1, success);
     int val2 = eval(opIndex+1, q, success);
-    //TODO:not dispose the case "4 + 3", the space after "4", cause get_op() never recognize space
     switch(tokens[opIndex].type)
     {
       case TK_PLUS: return val1 + val2;

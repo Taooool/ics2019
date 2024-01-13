@@ -7,8 +7,58 @@
 
 // this should be enough
 static char buf[65536];
-static inline void gen_rand_expr() {
-  buf[0] = '\0';
+
+//pa1: 生成表达式
+uint32_t choose(uint32_t n) {
+  return rand()%n;
+}
+
+//arguments: p represents the left bound of the expression, q represents the right bound of the expression, both are array index
+static inline void gen_rand_expr(int p, int q) {
+  // buf[0] = '\0';
+  //pa1: 生成表达式
+  buf[q+1] = '\0';  //ps: don't foget to add '\0' to the end of the string
+  if(p == q) //1 token expersion is a number
+    buf[p] = choose(10) + '0'; //choose(10) 'scope is 0~9', so add '0' to get the char
+  else if(p + 1 == q) //2 token expersion is also a number
+  {
+    buf[p] = choose(9) + '1'; //the first number can't be 0
+    buf[q] = choose(10) + '0';
+  }
+  else
+  {
+    int opIndex = choose(q-p-1) + p + 1; //choose an operator, opIndex's scope is [p+1, q-1]
+    switch(choose(5))
+    {
+      case 0:
+        gen_rand_expr(p, opIndex-1);
+        buf[opIndex] = '+';
+        gen_rand_expr(opIndex+1, q);
+        break;
+      case 1:
+        gen_rand_expr(p, opIndex-1);
+        buf[opIndex] = '-';
+        gen_rand_expr(opIndex+1, q);
+        break;
+      case 2:
+        gen_rand_expr(p, opIndex-1);
+        buf[opIndex] = '*';
+        gen_rand_expr(opIndex+1, q);
+        break;
+      case 3:
+        gen_rand_expr(p, opIndex-1);
+        buf[opIndex] = '/';
+        gen_rand_expr(opIndex+1, q);
+        break;
+      case 4:
+        buf[p] = '(';
+        buf[q] = ')';
+        gen_rand_expr(p+1, q-1);
+        break;
+      default: assert(0);
+    }
+  }
+
 }
 
 static char code_buf[65536];
