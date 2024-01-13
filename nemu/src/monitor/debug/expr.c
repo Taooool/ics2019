@@ -5,6 +5,8 @@
  */
 #include <sys/types.h>
 #include <regex.h>
+//pa1: 表达式求值
+#include <stdlib.h> //to use atoi()
 
 enum {
   TK_NOTYPE = 256, TK_EQ
@@ -35,8 +37,8 @@ static struct rule {
   {"\\(", TK_LEFT_PARENTHESIS, 6}, // left parenthesis
   {"\\)", TK_RIGHT_PARENTHESIS, 6}, // right parenthesis
   //TODO: deciaml can be more accurate
+  {"0[xX][0-9a-fA-F]+", TK_HEX, 0}, // hex, ps: hex need to be declared before decimal
   {"[0-9]+", TK_DECIMAL, 0}, // decimal
-  {"0[xX][0-9a-fA-F]+", TK_HEX, 0}, // hex
   {"\\$[a-zA-Z]+", TK_REG, 0}, // register
   {"==", TK_EQ, 2},        // equal
   //pointer need to be recognized specially in function expr()
