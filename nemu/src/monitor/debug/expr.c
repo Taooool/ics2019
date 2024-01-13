@@ -168,14 +168,12 @@ static uint32_t eval(int p, int q, bool *success)
   }
   else if(p==q)
   {
+    int result = 0;
     if(tokens[p].type == TK_DECIMAL)
-      return atoi(tokens[p].str);
+      result = atoi(tokens[p].str);
     else if(tokens[p].type == TK_HEX)
-    {
-      int result = 0;
       sscanf(tokens[p].str, "%x", &result);
-      return result;
-    }
+    return result;
     //TODO: reg
   }
   else if(check_parentheses(p, q) == true)
@@ -215,6 +213,7 @@ static uint32_t eval(int p, int q, bool *success)
       default: assert(0);
     }
   }
+  return 0;
 }
 
 uint32_t expr(char *e, bool *success) {
