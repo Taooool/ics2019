@@ -17,9 +17,11 @@ uint32_t choose(uint32_t n) {
 static inline void gen_rand_expr(int p, int q) {
   // buf[0] = '\0';
   //pa1: 生成表达式
-  buf[q+1] = '\0';  //ps: don't foget to add '\0' to the end of the string
-  if(p == q) //1 token expersion is a number
-    buf[p] = choose(10) + '0'; //choose(10) 'scope is 0~9', so add '0' to get the char
+  //buf[q+1] = '\0';  //ps: can't implement here cause the function will iterate
+  if(p > q)
+    return ;	//ps:don't foget
+  else if(p == q) //1 token expersion is a number
+    buf[p] = choose(9) + '1'; //choose(9) 'scope is 0~8, so add '1' to get the char. not gen 0 to prevent /0 case
   else if(p + 1 == q) //2 token expersion is also a number
   {
     buf[p] = choose(9) + '1'; //the first number can't be 0
@@ -79,7 +81,12 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
-    gen_rand_expr();
+    gen_rand_expr(0, 10);
+    //pa1: 生成表达式
+    buf[11]='\0';
+    //for(int i=0; i<=10; i++)
+    	//printf("%c", buf[i]);
+    //printf("\n");
 
     sprintf(code_buf, code_format, buf);
 
@@ -95,9 +102,8 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
 
     int result;
-    fscanf(fp, "%d", &result);
+    int tmp = fscanf(fp, "%d", &result);
     pclose(fp);
-
     printf("%u %s\n", result, buf);
   }
   return 0;
