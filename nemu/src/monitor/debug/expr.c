@@ -134,7 +134,7 @@ static bool make_token(char *e) {
       return false;
     }
   }
-
+  printf("nr_token = %d\n", nr_token);
   return true;
 }
 
@@ -173,6 +173,7 @@ static int get_op(int p, int q)
       parenthesesNum--;
     else if(parenthesesNum == 0)
     {
+      //!= 0 to ignore the spaces
       if(tokens[i].priority <= priority && tokens[i].priority != 0)
       {
         op = i;
@@ -206,6 +207,7 @@ static uint32_t eval(int p, int q, bool *success)
   else
   {
     int opIndex = get_op(p, q);
+    printf("opIndex = %d\n", opIndex);
     //can't dispose the pointer case in the following switch case
     if(opIndex == -1)
     {
@@ -220,6 +222,7 @@ static uint32_t eval(int p, int q, bool *success)
     }
     int val1 = eval(p, opIndex-1, success);
     int val2 = eval(opIndex+1, q, success);
+    //TODO:not dispose the case "4 + 3", the space after "4", cause get_op() never recognize space
     switch(tokens[opIndex].type)
     {
       case TK_PLUS: return val1 + val2;
@@ -260,7 +263,6 @@ uint32_t expr(char *e, bool *success) {
   }
 
   //pa1: 递归求值
-  *success = true;
   return eval(0, nr_token-1, success);
 
   /* TODO: Insert codes to evaluate the expression. */
