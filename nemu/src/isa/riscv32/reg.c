@@ -19,9 +19,15 @@ uint32_t isa_reg_str2val(const char *s, bool *success) {
   //pa1: 扩展表达式求值的功能
   *success = true;
   if(strcmp("pc", s+1))
+  {
+    printf("1");
     return cpu.pc;
+  }
   else if(s[1] == '0')
+  {
+    printf("2");
     return reg_l(0);
+  }
   else
   {
     for(int i=1; i<32; i++)
