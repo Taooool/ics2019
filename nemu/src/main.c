@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
     	printf("expresion calculate wrongly!\n");
     	break;
     }
+    nofExpr++;
   }
   if(flag)
     printf("expersion calculate correctly!\ntest times: %d\n", nofExpr);
