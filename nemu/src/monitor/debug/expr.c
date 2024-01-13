@@ -199,6 +199,7 @@ static uint32_t eval(int p, int q, bool *success)
   else if(p==q)
   {
     int result = 0;
+    printf("%d %d\n", tokens[p].type, TK_DECIMAL);
     if(tokens[p].type == TK_DECIMAL)
     {
       printf("it is a decimal\n");
