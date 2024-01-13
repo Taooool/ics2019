@@ -109,7 +109,7 @@ static bool make_token(char *e) {
           case TK_DECIMAL:
           case TK_HEX:
           case TK_REG:
-            printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
+            //printf("token type: %d \t priority: %d\n", rules[i].token_type, rules[i].priority);
             tokens[nr_token].type = rules[i].token_type;
             tokens[nr_token].priority = rules[i].priority;
             strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -223,7 +223,7 @@ static uint32_t eval(int p, int q, bool *success)
     //pa1: 扩展表达式求值的功能
     else if(tokens[p].type == TK_REG)
     {
-      printf("reg= %s\n", tokens[p].str);
+      //printf("reg= %s\n", tokens[p].str);
       result = isa_reg_str2val(tokens[p].str, success);
       if(success == false)
         printf("can't find the register\n");

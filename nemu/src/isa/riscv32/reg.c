@@ -18,16 +18,10 @@ void isa_reg_display() {
 uint32_t isa_reg_str2val(const char *s, bool *success) {
   //pa1: 扩展表达式求值的功能
   *success = true;
-  if(strcmp("pc", s+1))
-  {
-    printf("1");
+  if(strcmp("pc", s+1) == 0)
     return cpu.pc;
-  }
   else if(s[1] == '0')
-  {
-    printf("2");
     return reg_l(0);
-  }
   else
   {
     for(int i=1; i<32; i++)
@@ -35,7 +29,7 @@ uint32_t isa_reg_str2val(const char *s, bool *success) {
       if(strcmp(regsl[i], s+1) == 0)
       {
         uint32_t result = reg_l(i);
-        printf("i= %d\treg= %s\tval= 0x%08x\t%d\n", i, regsl[i], result, result);
+        //printf("i= %d\treg= %s\tval= 0x%08x\t%d\n", i, regsl[i], result, result);
         return result;
       }
     }
