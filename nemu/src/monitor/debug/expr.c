@@ -41,7 +41,7 @@ static struct rule {
   //TODO: deciaml can be more accurate
   {"0[xX][0-9a-fA-F]+", TK_HEX, 0}, // hex, ps: hex need to be declared before decimal
   {"[0-9]+", TK_DECIMAL, 0}, // decimal
-  {"\\$[a-zA-Z]+", TK_REG, 0}, // register
+  {"\\$[0-9a-zA-Z]+", TK_REG, 0}, // register
   {"==", TK_EQ, 2},        // equal
   {"!=", TK_NEQ, 2},       // not equal
   {"&&", TK_AND, 1},       // and
