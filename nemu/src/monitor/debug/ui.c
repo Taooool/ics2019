@@ -194,7 +194,7 @@ static int cmd_w(char *args)
   if(wp == NULL)
     printf("Set watchpoint failed!\n");
   else
-    printf("watchpoint no: %d\t expr: %s\n", wp->NO, wp->expr);
+    printf("watchpoint no: %d\t expr: %s\t value: %d\n", wp->NO, wp->expr, wp->newValue);
   return 0;
 }
 
