@@ -10,6 +10,12 @@
 void cpu_exec(uint64_t);
 //pa1: 打印寄存器
 void isa_reg_display();
+//pa1: 实现监视点
+WP *new_wp(char *expr);
+//pa1: 打印监视点信息
+void watchpoint_display();
+//pa1: 删除监视点
+bool free_wp(int NO);
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -52,6 +58,12 @@ static int cmd_x(char *args);
 //pa1: 表达式求值
 static int cmd_p(char *args);
 
+//pa1: 实现监视点
+static int cmd_w(char *args);
+
+//pa1: 删除监视点
+static int cmd_d(char *args);
+
 static struct {
   char *name;
   char *description;
@@ -68,8 +80,12 @@ static struct {
 	{ "info", "Display program status", cmd_info },
 	//pa1: 扫描内存
 	{ "x", "Read memory", cmd_x },
-  //pa2: 表达式求值
+  //pa1: 表达式求值
   { "p", "Expression evaluation", cmd_p },
+  //pa1: 实现监视点
+  { "w", "Set watchpoint", cmd_w },
+  //pa1: 删除监视点
+  { "d", "Delete watchpoint", cmd_d },
 
 };
 
@@ -121,9 +137,8 @@ static int cmd_info(char *args)
 	if(strcmp(arg, "r") == 0)
 		isa_reg_display();
 	else if(strcmp(arg, "w") == 0)
-	{
-
-	}
+    //pa1: 打印监视点信息
+    watchpoint_display();
 	else
 		printf("Unknown command '%s'\n", arg);
 	return 0;
@@ -160,7 +175,7 @@ static int cmd_x(char *args)
 		
 }
 
-//pa2: 表达式求值
+//pa1: 表达式求值
 static int cmd_p(char *args)
 {
   bool success = true;
@@ -171,6 +186,37 @@ static int cmd_p(char *args)
     printf("0x%x\t%d\n", result, result);
   return 0;
 }
+
+//pa1: 实现监视点
+static int cmd_w(char *args)
+{
+  WP *wp = new_wp(args);
+  if(wp == NULL)
+    printf("Set watchpoint failed!\n");
+  else
+    printf("watchpoint no: %d\t expr: %s\n", wp->NO, wp->expr);
+}
+
+//pa1: 删除监视点
+static int cmd_d(char *args)
+{
+  char *arg = strtok(NULL, " ");
+  if(arg == NULL)
+  {
+    printf("Please input the argument!\n");
+    return 0;
+  }
+  int NO = atoi(arg);
+  if(free_wp(NO) == false)
+    printf("Delete watchpoint failed!\n");
+  else
+    printf("Delete watchpoint success!\n");
+  return 0;
+}
+
+
+
+
 
 void ui_mainloop(int is_batch_mode) {
   if (is_batch_mode) {

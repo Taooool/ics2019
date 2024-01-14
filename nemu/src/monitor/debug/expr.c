@@ -17,7 +17,7 @@ enum {
   //pa1: 词法分析
   , TK_PLUS, TK_MINUS, TK_MULTIPLE, TK_DIVIDE, TK_LEFT_PARENTHESIS, TK_RIGHT_PARENTHESIS
   , TK_DECIMAL, TK_HEX, TK_REG, TK_DEREF, TK_NEQ, TK_AND
-};
+};  //in enum, once a value is assigned, the following values will be assigned automatically with the previous value plus 1
 
 static struct rule {
   char *regex;
