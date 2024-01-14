@@ -194,7 +194,8 @@ static int cmd_w(char *args)
   if(wp == NULL)
     printf("Set watchpoint failed!\n");
   else
-    printf("watchpoint no: %d\t expr: %s\t value\n", wp->NO, wp->expr, wp->newValue);
+    printf("watchpoint no: %d\t expr: %s\t value: %d\n", wp->NO, wp->expr, wp->newValue);
+  return 0;
 }
 
 //pa1: 删除监视点

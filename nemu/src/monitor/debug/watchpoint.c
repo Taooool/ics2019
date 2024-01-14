@@ -22,7 +22,7 @@ void init_wp_pool() {
 
 //pa1: 设置监视点
 //function: add a new watchpoint in the pool
-WP *new_wp(char *expr)  //can't use expr as a parameter, because expr is a function in expr.c
+WP *new_wp(char *EXPR)	//can't use expr as parameter name, cause these is a function named expr also
 {
   //fail case1: pool is full
   if(free_ == NULL)
@@ -33,7 +33,7 @@ WP *new_wp(char *expr)  //can't use expr as a parameter, because expr is a funct
 
   //fail case2: expr is invalid
   bool success = true;
-  uint32_t result = expr(expr, &success);
+  uint32_t result = expr(EXPR, &success);
   if(success == false)
   {
     printf("Expression evaluation failed!\n");
@@ -47,7 +47,7 @@ WP *new_wp(char *expr)  //can't use expr as a parameter, because expr is a funct
   //busy linklist moving direction: right->left; +1`node
   wp->next = head;
   head = wp;
-  strcpy(wp->expr, expr);
+  strcpy(wp->expr, EXPR);
   wp->changed = false;
   wp->newValue = wp->oldValue = result;
   return wp;
@@ -61,17 +61,21 @@ bool watchpoint_monitor()
   WP *wp = head;
   if(wp == NULL)
     return false;
-  bool success = true;
-  uint32_t result = expr(wp->expr, &success);
-  if(success == false)
-    panic("new watchpoint's expr is invalid!\n");
-  if(result != wp->newValue)
+  while(wp != NULL)
   {
-    wp->changed = true;
-    wp->oldValue = wp->newValue;
-    wp->newValue = result;
-    printf("watchpoint changed! Please use 'info w' to check!\n");
-    return true;
+    bool success = true;
+    uint32_t result = expr(wp->expr, &success);
+    if(success == false)
+      panic("new watchpoint's expr is invalid!\n");
+    if(result != wp->newValue)
+    {
+      wp->changed = true;
+      wp->oldValue = wp->newValue;
+      wp->newValue = result;
+      printf("watchpoint changed! Please use 'info w' to check!\n");
+      return true;
+    }
+    wp = wp->next;
   }
   return false;
 }
@@ -84,10 +88,10 @@ void watchpoint_display()
     printf("No watchpoint!\n");
   else
   {
-    printf("Num\tExpr\t\tOldValue\tNewValue\n");
+    printf("Num\tExpr\t\t\tOldValue\t\tNewValue\n");
     while(wp != NULL)
     {
-      printf("%d\t%s\t\t%d\t\t%d\n", wp->NO, wp->expr, wp->oldValue, wp->newValue);
+      printf("%d\t%s\t\t\t%d\t\t\t%d\n", wp->NO, wp->expr, wp->oldValue, wp->newValue);
       wp = wp->next;
     }
   }
