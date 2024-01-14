@@ -22,7 +22,7 @@ void init_wp_pool() {
 
 //pa1: 设置监视点
 //function: add a new watchpoint in the pool
-WP *new_wp(char *expr)
+WP *new_wp(char *EXPR)	//can't use expr as parameter name, cause these is a function named expr also
 {
   //fail case1: pool is full
   if(free_ == NULL)
@@ -33,7 +33,7 @@ WP *new_wp(char *expr)
 
   //fail case2: expr is invalid
   bool success = true;
-  uint32_t result = expr(expr, &success);
+  uint32_t result = expr(EXPR, &success);
   if(success == false)
   {
     printf("Expression evaluation failed!\n");
@@ -47,7 +47,7 @@ WP *new_wp(char *expr)
   //busy linklist moving direction: right->left; +1`node
   wp->next = head;
   head = wp;
-  strcpy(wp->expr, expr);
+  strcpy(wp->expr, EXPR);
   wp->changed = false;
   wp->newValue = wp->oldValue = result;
   return wp;
