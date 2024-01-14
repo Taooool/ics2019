@@ -61,6 +61,10 @@ void cpu_exec(uint64_t n) {
   log_clearbuf();
 
     /* TODO: check watchpoints here. */
+  //pa1: 实现监视点
+  bool changed = watchpoint_monitor();
+  if(changed)
+    nemu_state.state = NEMU_STOP;
 
 #endif
 
