@@ -88,10 +88,10 @@ void watchpoint_display()
     printf("No watchpoint!\n");
   else
   {
-    printf("Num\tExpr\t\t\tOldValue\tNewValue\n");
+    printf("Num\tExpr\t\t\tOldValue\t\tNewValue\n");
     while(wp != NULL)
     {
-      printf("%d\t%s\t\t\t%d\t\t%d\n", wp->NO, wp->expr, wp->oldValue, wp->newValue);
+      printf("%d\t%s\t\t\t%d\t\t\t%d\n", wp->NO, wp->expr, wp->oldValue, wp->newValue);
       wp = wp->next;
     }
   }
