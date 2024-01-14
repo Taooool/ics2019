@@ -22,7 +22,7 @@ void init_wp_pool() {
 
 //pa1: 设置监视点
 //function: add a new watchpoint in the pool
-WP *new_wp(char *expr)
+WP *new_wp(char *expr)  //can't use expr as a parameter, because expr is a function in expr.c
 {
   //fail case1: pool is full
   if(free_ == NULL)
