@@ -61,17 +61,21 @@ bool watchpoint_monitor()
   WP *wp = head;
   if(wp == NULL)
     return false;
-  bool success = true;
-  uint32_t result = expr(wp->expr, &success);
-  if(success == false)
-    panic("new watchpoint's expr is invalid!\n");
-  if(result != wp->newValue)
+  while(wp != NULL)
   {
-    wp->changed = true;
-    wp->oldValue = wp->newValue;
-    wp->newValue = result;
-    printf("watchpoint changed! Please use 'info w' to check!\n");
-    return true;
+    bool success = true;
+    uint32_t result = expr(wp->expr, &success);
+    if(success == false)
+      panic("new watchpoint's expr is invalid!\n");
+    if(result != wp->newValue)
+    {
+      wp->changed = true;
+      wp->oldValue = wp->newValue;
+      wp->newValue = result;
+      printf("watchpoint changed! Please use 'info w' to check!\n");
+      return true;
+    }
+    wp = wp->next;
   }
   return false;
 }
