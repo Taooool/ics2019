@@ -13,12 +13,12 @@ typedef struct {
   uint32_t type;
   int width;
   union {
-    uint32_t reg;
+    uint32_t reg; //reg's id; 机器内部的寄存器编号，例如会有一个数字对应寄存器t0
     rtlreg_t addr;
     uint32_t imm;
     int32_t simm;
   };
-  rtlreg_t val;
+  rtlreg_t val; //if above is reg, val is the content of reg; if above is imm/simm, val is also the imm/simm
   char str[OP_STR_SIZE];
 } Operand;
 
