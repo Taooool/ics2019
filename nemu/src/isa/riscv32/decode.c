@@ -37,7 +37,7 @@ make_DHelper(ld) {
   //src: x[rs1](is the value of register rs1); so rs1 is a register
   decode_op_r(id_src, decinfo.isa.instr.rs1, true); //load the message into id_src(Operand * type)
   //src2: simm11_0(offset)
-  decode_op_i(id_src2, decinfo.isa.instr.simm11_0, true); load the message into id_src2(Operand * type)
+  decode_op_i(id_src2, decinfo.isa.instr.simm11_0, true); //load the message into id_src2(Operand * type)
 
   print_Dop(id_src->str, OP_STR_SIZE, "%d(%s)", id_src2->val, reg_name(id_src->reg, 4));
 
